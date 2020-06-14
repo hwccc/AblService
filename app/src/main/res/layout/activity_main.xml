@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+    <Button
+        android:id="@+id/bt_openAblSettings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="打开无障碍服务设置" />
+
+    <Button
+        android:id="@+id/bt_onActivateDevice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="激活设备管理器" />
+
+    <Button
+        android:id="@+id/bt_onTurnOffPower"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="关闭耗电保护" />
+
+    <Button
+        android:id="@+id/bt_onAppUsagePermissions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="开启查看应用使用权限" />
+
+    <Button
+        android:id="@+id/bt_onSetLauncher"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="设置为默认桌面" />
+
+    <Button
+        android:id="@+id/bt_onUsbDebugging"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="关闭USB调试" />
+
+    <Button
+        android:id="@+id/bt_openNotification"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="打开通知权限" />
+
+    <Button
+        android:id="@+id/bt_closeSuspendedBall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="关闭悬浮球" />
+
+    <Button
+        android:id="@+id/bt_battery_optimization"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="电池优化" />
+
+
+    <Button
+        android:id="@+id/bt_startAccessibilitySettings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="启动无障碍设置" />
+
+</LinearLayout>

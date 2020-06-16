@@ -6,14 +6,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.provider.Settings;
 import android.text.TextUtils;
-import android.widget.Toast;
 
 import com.blankj.utilcode.util.ActivityUtils;
 import com.blankj.utilcode.util.LogUtils;
+import com.hwc.ablservice.FlowerApplication;
 import com.hwc.abllib.bean.AblStateBean;
 import com.hwc.abllib.callback.AblSettingCallBack;
-import com.hwc.ablservice.ClientApplication;
-import com.hwc.ablservice.MainActivity;
+import com.hwc.ablservice.FlowerApplication;
 
 /**
  * @author: hwc
@@ -27,7 +26,7 @@ public class NotificationUtils {
      * 跳转到通知权限设置界面
      */
     public static void setNotification(AblSettingCallBack ablSettingCallBack) {
-        if (NotificationUtils.isNotificationListenerEnabled(ClientApplication.getInstance())) {
+        if (NotificationUtils.isNotificationListenerEnabled(FlowerApplication.getInstance())) {
             ablSettingCallBack.onSuccess(new AblStateBean(AblStateBean.STATE_HAVE));
         } else {
             try {

@@ -5,9 +5,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.provider.Settings;
 
+import com.hwc.ablservice.FlowerApplication;
 import com.hwc.abllib.bean.AblStateBean;
 import com.hwc.abllib.callback.AblSettingCallBack;
-import com.hwc.ablservice.ClientApplication;
 
 import static com.blankj.utilcode.util.ActivityUtils.startActivity;
 
@@ -44,7 +44,7 @@ public class AdbUtils {
      */
     public void setUsbDebugging(AblSettingCallBack ablSettingCallBack) {
         AblStateBean ablStateBean = new AblStateBean();
-        if (isOpenAdb(ClientApplication.getInstance())) {
+        if (isOpenAdb(FlowerApplication.getInstance())) {
             if (startDevelopmentActivity()) {
                 ablStateBean.state = AblStateBean.STATE_FIND_INTENT;
             } else {

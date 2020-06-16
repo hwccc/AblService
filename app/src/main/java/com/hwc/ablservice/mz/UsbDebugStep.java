@@ -4,6 +4,8 @@ import android.os.Message;
 import android.view.accessibility.AccessibilityNodeInfo;
 
 import com.blankj.utilcode.util.LogUtils;
+import com.hwc.ablservice.FlowerApplication;
+import com.hwc.ablservice.utils.AppIntentUtils;
 import com.hwc.abllib.AblStepBase;
 import com.hwc.abllib.AblStepHandler;
 import com.hwc.abllib.AblSteps;
@@ -11,7 +13,7 @@ import com.hwc.abllib.bean.AblStateBean;
 import com.hwc.abllib.callback.AblSettingCallBack;
 import com.hwc.abllib.callback.AniCallBack;
 import com.hwc.abllib.utils.AblViewUtil;
-import com.hwc.ablservice.utils.AppIntentUtils;
+import com.hwc.ablservice.utils.AppUtils;
 
 import java.util.List;
 
@@ -20,8 +22,12 @@ import java.util.List;
  *
  * @author hwc
  */
-public class UsbStep extends AblStepBase implements AblSteps {
-    public UsbStep(AblSettingCallBack ablSettingCallBack) {
+public class UsbDebugStep extends AblStepBase implements AblSteps {
+
+    public UsbDebugStep() {
+    }
+
+    public UsbDebugStep(AblSettingCallBack ablSettingCallBack) {
         super(ablSettingCallBack);
     }
 
@@ -29,7 +35,7 @@ public class UsbStep extends AblStepBase implements AblSteps {
     public void onStep(int step, Message msg) {
         switch (step) {
             case STEP_1: {
-                AppIntentUtils.setUsbDebugging(new AblSettingCallBack() {
+                AppIntentUtils.getInstance().setUsbDebugging(new AblSettingCallBack() {
                     @Override
                     public void onSuccess(AblStateBean ablStateBean) {
                         LogUtils.d(TAG, "ablStateBean: " + ablStateBean.toString());
@@ -39,13 +45,13 @@ public class UsbStep extends AblStepBase implements AblSteps {
                         } else if (ablStateBean.state == AblStateBean.STATE_FIND_INTENT) {
                             AblStepHandler.sendMsg(STEP_2);
                         } else {
-                            onCallBackFail();
+                            onCallBackFail(ablStateBean);
                         }
                     }
 
                     @Override
-                    public void onFail() {
-                        onCallBackFail();
+                    public void onFail(AblStateBean ablStateBean) {
+                        onCallBackFail(ablStateBean);
                     }
                 });
                 break;
@@ -67,12 +73,12 @@ public class UsbStep extends AblStepBase implements AblSteps {
                                         }
                                     }
                                 }
-                                AblStepHandler.sendMsg(AblSteps.STEP_3);
+                                AblStepHandler.sendTimeMsg(AblSteps.STEP_3);
                             }
 
                             @Override
                             public void fail() {
-                                AblStepHandler.sendMsg(AblSteps.STEP_3);
+                                onCallBackFail(new AblStateBean(AblStateBean.STATE_NO_FIND_INTENT));
                             }
                         }
                 );
@@ -80,8 +86,12 @@ public class UsbStep extends AblStepBase implements AblSteps {
             }
             case STEP_3: {
                 AblViewUtil.back();
-                AblStepHandler.getInstance().initStepClass(true, new NoticeReadStep(ablSettingCallBack));
-                AblStepHandler.sendMsg(AblSteps.STEP_1);
+                AblStepHandler.sendTimeMsg(AblSteps.STEP_4);
+                break;
+            }
+            case STEP_4: {
+                onCallBackEnd();
+                AppUtils.moveToFront(FlowerApplication.getInstance());
                 break;
             }
             default:

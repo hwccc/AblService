@@ -145,23 +145,9 @@ public class AblViewUtil {
      * @return
      */
     public static void findByText(List<AccessibilityNodeInfo> list, AccessibilityNodeInfo info, String text, boolean isScroll) {
-        if (AblService.getInstance().getRootInActiveWindow() != null) {
-            List<AccessibilityNodeInfo> accessibilityNodeInfos = AblService.getInstance().getRootInActiveWindow().findAccessibilityNodeInfosByText(text);
-            if (accessibilityNodeInfos != null
-                    && !accessibilityNodeInfos.isEmpty()) {
-                list.addAll(accessibilityNodeInfos);
-            } else {
-                if (isScroll) {
-                    if (info.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)) {
-                        try {
-                            Thread.sleep(500);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        findByText(list, info, text, isScroll);
-                    }
-                }
-            }
+        findByTextToAction(list, info, text, isScroll, AccessibilityNodeInfo.ACTION_SCROLL_FORWARD);
+        if (list.isEmpty()) {
+            findByTextToAction(list, info, text, isScroll, AccessibilityNodeInfo.ACTION_SCROLL_BACKWARD);
         }
     }
 
@@ -171,28 +157,33 @@ public class AblViewUtil {
      * @param isScroll
      * @return
      */
-    public static void findIdByTextAndId(List<AccessibilityNodeInfo> list, AccessibilityNodeInfo info, String text, String id, boolean isScroll) {
-        if (AblService.getInstance().getRootInActiveWindow() != null) {
-            List<AccessibilityNodeInfo> accessibilityNodeInfos = AblService.getInstance().getRootInActiveWindow().findAccessibilityNodeInfosByText(text);
-            if (accessibilityNodeInfos != null && !accessibilityNodeInfos.isEmpty()) {
-                accessibilityNodeInfos = accessibilityNodeInfos.get(0).getParent().findAccessibilityNodeInfosByViewId(id);
-                if (accessibilityNodeInfos != null && !accessibilityNodeInfos.isEmpty()) {
-                    list.addAll(accessibilityNodeInfos);
-                    return;
-                }
-            }
-            if (isScroll) {
-                if (info.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)) {
-                    try {
-                        Thread.sleep(500);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    findByText(list, info, text, isScroll);
-                }
-            }
+    public static boolean findByTextToAction(List<AccessibilityNodeInfo> list, AccessibilityNodeInfo info, String text, boolean isScroll, int action) {
+        AccessibilityNodeInfo rootInActiveWindow = AblService.getInstance().getRootInActiveWindow();
+        if (rootInActiveWindow != null) {
+            List<AccessibilityNodeInfo> accessibilityNodeInfos = rootInActiveWindow.findAccessibilityNodeInfosByText(text);
+            if (accessibilityNodeInfos != null
+                    && !accessibilityNodeInfos.isEmpty()) {
+                list.addAll(accessibilityNodeInfos);
+                return true;
+            } else {
+                if (isScroll) {
+                    if (info.performAction(action)) {
+                        try {
+                            Thread.sleep(10);
+                            for (int i = 0; i < info.getChildCount(); i++) {
+                                if (findByTextToAction(list, info, text, isScroll, action)) {
+                                    return true;
+                                }
+                            }
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
 
+                    }
+                }
+            }
         }
+        return false;
     }
 
     public static List<AccessibilityNodeInfo> findByText(String text) {
@@ -428,6 +419,7 @@ public class AblViewUtil {
 
     /**
      * 点击打开选择
+     *
      * @param nodeInfo
      * @param isHandleParent
      * @return
@@ -449,6 +441,7 @@ public class AblViewUtil {
 
     /**
      * 点击关闭选择
+     *
      * @param nodeInfo
      * @param isHandleParent
      * @return

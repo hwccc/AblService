@@ -11,8 +11,10 @@ import com.hwc.abllib.bean.AblStateBean;
 import com.hwc.abllib.callback.AblSettingCallBack;
 import com.hwc.abllib.callback.AniCallBack;
 import com.hwc.abllib.utils.AblViewUtil;
+import com.hwc.ablservice.FlowerApplication;
 import com.hwc.ablservice.config.AppConfig;
 import com.hwc.ablservice.utils.AppIntentUtils;
+import com.hwc.ablservice.utils.AppUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +25,10 @@ import java.util.List;
  * @author hwc
  */
 public class AppUsagePermissionsStep extends AblStepBase implements AblSteps {
+
+    public AppUsagePermissionsStep() {
+    }
+
     public AppUsagePermissionsStep(AblSettingCallBack ablSettingCallBack) {
         super(ablSettingCallBack);
     }
@@ -31,20 +37,20 @@ public class AppUsagePermissionsStep extends AblStepBase implements AblSteps {
     public void onStep(int step, Message msg) {
         switch (step) {
             case STEP_1: {
-                AppIntentUtils.openAppUsagePermissions(new AblSettingCallBack() {
+                AppIntentUtils.getInstance().openAppUsagePermissions(new AblSettingCallBack() {
                     @Override
                     public void onSuccess(AblStateBean ablStateBean) {
                         LogUtils.d(TAG, "ablStateBean: " + ablStateBean.toString());
                         if (ablStateBean.state == AblStateBean.STATE_FIND_INTENT) {
                             AblStepHandler.sendMsg(STEP_2);
                         } else {
-                            onCallBackFail();
+                            onCallBackFail(ablStateBean);
                         }
                     }
 
                     @Override
-                    public void onFail() {
-                        onCallBackFail();
+                    public void onFail(AblStateBean ablStateBean) {
+                        onCallBackFail(ablStateBean);
                     }
                 });
                 break;
@@ -64,7 +70,7 @@ public class AppUsagePermissionsStep extends AblStepBase implements AblSteps {
 
                             @Override
                             public void fail() {
-                                AblStepHandler.sendMsg(AblSteps.STEP_3);
+                                AblStepHandler.sendTimeMsg(AblSteps.STEP_3);
                             }
                         }
                 );
@@ -79,17 +85,16 @@ public class AppUsagePermissionsStep extends AblStepBase implements AblSteps {
                                 AblViewUtil.findByText(accessibilityNodeInfos, info, "使用记录访问", true);
                                 if (accessibilityNodeInfos.size() > 0) {
                                     AccessibilityNodeInfo child = accessibilityNodeInfos.get(0).getParent();
-                                    if (AblViewUtil.clickNodeInfo(child)) {
-                                        AblStepHandler.sendMsg(AblSteps.STEP_4, 3000);
-                                        return;
-                                    }
+                                    AblViewUtil.clickNodeInfo(child);
+                                    AblStepHandler.sendMsg(AblSteps.STEP_4, 3000);
+                                } else {
+                                    AblStepHandler.sendTimeMsg(AblSteps.STEP_4);
                                 }
-                                AblStepHandler.sendMsg(AblSteps.STEP_4);
                             }
 
                             @Override
                             public void fail() {
-                                AblStepHandler.sendMsg(AblSteps.STEP_4);
+                                AblStepHandler.sendTimeMsg(AblSteps.STEP_4);
                             }
                         }
                 );
@@ -104,17 +109,16 @@ public class AppUsagePermissionsStep extends AblStepBase implements AblSteps {
                                 AblViewUtil.findByText(accessibilityNodeInfos, info, AppConfig.APP_NAME, true);
                                 if (accessibilityNodeInfos.size() > 0) {
                                     AccessibilityNodeInfo child = accessibilityNodeInfos.get(0).getParent();
-                                    if (AblViewUtil.clickNodeInfo(child)) {
-                                        AblStepHandler.sendMsg(AblSteps.STEP_5);
-                                        return;
-                                    }
+                                    AblViewUtil.clickNodeInfo(child);
+                                    AblStepHandler.sendMsg(AblSteps.STEP_5);
+                                } else {
+                                    AblStepHandler.sendTimeMsg(AblSteps.STEP_5);
                                 }
-                                AblStepHandler.sendMsg(AblSteps.STEP_7);
                             }
 
                             @Override
                             public void fail() {
-                                AblStepHandler.sendMsg(AblSteps.STEP_7);
+                                AblStepHandler.sendTimeMsg(AblSteps.STEP_5);
                             }
                         }
                 );
@@ -125,36 +129,34 @@ public class AppUsagePermissionsStep extends AblStepBase implements AblSteps {
                     @Override
                     public void succ(AccessibilityNodeInfo info) {
                         AblViewUtil.clickOpenCheckNodeInfo(info, true);
-                        AblStepHandler.sendMsg(AblSteps.STEP_6);
+                        AblStepHandler.sendTimeMsg(AblSteps.STEP_6);
                     }
 
                     @Override
                     public void fail() {
-                        AblStepHandler.sendMsg(AblSteps.STEP_6);
+                        onCallBackFail(new AblStateBean(AblStateBean.STATE_NO_FIND_INTENT));
                     }
                 });
-
                 break;
             }
             case STEP_6: {
                 AblViewUtil.back();
-                AblStepHandler.sendMsg(AblSteps.STEP_7);
+                AblStepHandler.sendTimeMsg(AblSteps.STEP_7);
                 break;
             }
             case STEP_7: {
                 AblViewUtil.back();
-                AblStepHandler.sendMsg(AblSteps.STEP_8);
+                AblStepHandler.sendTimeMsg(AblSteps.STEP_8);
                 break;
             }
             case STEP_8: {
                 AblViewUtil.back();
-                AblStepHandler.sendMsg(AblSteps.STEP_9);
+                AblStepHandler.sendTimeMsg(AblSteps.STEP_9);
                 break;
             }
             case STEP_9: {
-                AblViewUtil.back();
-                AblStepHandler.getInstance().initStepClass(true, new LauncherStep(ablSettingCallBack));
-                AblStepHandler.sendMsg(AblSteps.STEP_1);
+                onCallBackSuccess(new AblStateBean(AblStateBean.STATE_SET_SUCCESS));
+                AppUtils.moveToFront(FlowerApplication.getInstance());
                 break;
             }
             default:

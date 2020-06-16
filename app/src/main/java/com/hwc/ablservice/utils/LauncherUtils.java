@@ -2,18 +2,10 @@ package com.hwc.ablservice.utils;
 
 import android.annotation.SuppressLint;
 import android.app.ActivityManager;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.net.Uri;
-import android.os.Build;
-import android.os.PowerManager;
-import android.provider.Settings;
-
-import com.hwc.abllib.bean.AblStateBean;
-import com.hwc.ablservice.ClientApplication;
 
 import java.util.ArrayList;
 import java.util.List;

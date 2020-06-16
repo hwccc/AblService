@@ -44,7 +44,6 @@ public class AblService extends AccessibilityService {
     @Override
     public void onAccessibilityEvent(AccessibilityEvent event) {
         int eventType = event.getEventType();
-        LogUtils.d();
         LogUtils.d("==============Start====================");
         LogUtils.d("eventType: " + eventType);
         AccessibilityNodeInfo noteInfo = event.getSource();

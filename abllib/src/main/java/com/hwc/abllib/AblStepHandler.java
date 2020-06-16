@@ -66,6 +66,15 @@ public class AblStepHandler extends Handler {
      * 发送handler执行消息
      *
      * @param step        步骤
+     */
+    public static void sendTimeMsg(int step) {
+        sendMsg(step, 200, new String[]{});
+    }
+
+    /**
+     * 发送handler执行消息
+     *
+     * @param step        步骤
      * @param delayMillis 延迟时间
      */
     public static void sendMsg(int step, long delayMillis) {

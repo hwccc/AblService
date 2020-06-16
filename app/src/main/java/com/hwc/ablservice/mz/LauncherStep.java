@@ -11,8 +11,10 @@ import com.hwc.abllib.bean.AblStateBean;
 import com.hwc.abllib.callback.AblSettingCallBack;
 import com.hwc.abllib.callback.AniCallBack;
 import com.hwc.abllib.utils.AblViewUtil;
+import com.hwc.ablservice.FlowerApplication;
 import com.hwc.ablservice.config.AppConfig;
 import com.hwc.ablservice.utils.AppIntentUtils;
+import com.hwc.ablservice.utils.AppUtils;
 
 import java.util.List;
 
@@ -23,6 +25,9 @@ import java.util.List;
  */
 public class LauncherStep extends AblStepBase implements AblSteps {
 
+    public LauncherStep() {
+    }
+
     public LauncherStep(AblSettingCallBack ablSettingCallBack) {
         super(ablSettingCallBack);
     }
@@ -32,23 +37,23 @@ public class LauncherStep extends AblStepBase implements AblSteps {
         switch (step) {
             case STEP_1: {
                 // 设置默认桌面
-                AppIntentUtils.setLauncher(new AblSettingCallBack() {
+                AppIntentUtils.getInstance().setLauncher(new AblSettingCallBack() {
                     @Override
                     public void onSuccess(AblStateBean ablStateBean) {
                         LogUtils.d(TAG, "ablStateBean: " + ablStateBean.toString());
                         if (ablStateBean.state == AblStateBean.STATE_HAVE) {
-                            AblStepHandler.getInstance().initStepClass(true, new UsbStep(ablSettingCallBack));
+                            AblStepHandler.getInstance().initStepClass(true, new UsbDebugStep(ablSettingCallBack));
                             AblStepHandler.sendMsg(AblSteps.STEP_1);
                         } else if (ablStateBean.state == AblStateBean.STATE_FIND_INTENT) {
                             AblStepHandler.sendMsg(STEP_2);
                         } else {
-                            onCallBackFail();
+                            onCallBackFail(ablStateBean);
                         }
                     }
 
                     @Override
-                    public void onFail() {
-
+                    public void onFail(AblStateBean ablStateBean) {
+                        onCallBackFail(ablStateBean);
                     }
                 });
                 break;
@@ -63,13 +68,15 @@ public class LauncherStep extends AblStepBase implements AblSteps {
                                 if (!accessibilityNodeInfos.isEmpty()) {
                                     AccessibilityNodeInfo child = accessibilityNodeInfos.get(0).getParent();
                                     AblViewUtil.clickNodeInfo(child);
+                                    AblStepHandler.sendMsg(AblSteps.STEP_3);
+                                } else {
+                                    AblStepHandler.sendTimeMsg(AblSteps.STEP_3);
                                 }
-                                AblStepHandler.sendMsg(AblSteps.STEP_3);
                             }
 
                             @Override
                             public void fail() {
-                                AblStepHandler.sendMsg(AblSteps.STEP_3);
+                                AblStepHandler.sendTimeMsg(AblSteps.STEP_3);
                             }
                         }
                 );
@@ -85,8 +92,10 @@ public class LauncherStep extends AblStepBase implements AblSteps {
                                 if (!accessibilityNodeInfos.isEmpty()) {
                                     AccessibilityNodeInfo child = accessibilityNodeInfos.get(0).getParent();
                                     AblViewUtil.clickNodeInfo(child);
+                                    AblStepHandler.sendMsg(AblSteps.STEP_4);
+                                } else {
+                                    AblStepHandler.sendTimeMsg(AblSteps.STEP_4);
                                 }
-                                AblStepHandler.sendMsg(AblSteps.STEP_4);
                             }
 
                             @Override
@@ -108,12 +117,12 @@ public class LauncherStep extends AblStepBase implements AblSteps {
                                     AccessibilityNodeInfo child = accessibilityNodeInfos.get(0).getParent();
                                     AblViewUtil.clickNodeInfo(child);
                                 }
-                                AblStepHandler.sendMsg(AblSteps.STEP_5);
+                                AblStepHandler.sendTimeMsg(AblSteps.STEP_5);
                             }
 
                             @Override
                             public void fail() {
-                                AblStepHandler.sendMsg(AblSteps.STEP_5);
+                                onCallBackFail(new AblStateBean(AblStateBean.STATE_NO_FIND_INTENT));
                             }
                         }
                 );
@@ -121,19 +130,12 @@ public class LauncherStep extends AblStepBase implements AblSteps {
             }
             case STEP_5: {
                 AblViewUtil.back();
-                AblStepHandler.sendMsg(AblSteps.STEP_6);
+                AblStepHandler.sendTimeMsg(AblSteps.STEP_6);
                 break;
             }
             case STEP_6: {
-                AblViewUtil.back();
-                AblStepHandler.sendMsg(AblSteps.STEP_7);
-                break;
-            }
-            case STEP_7: {
-                AblViewUtil.back();
-                // 回到程序无障碍设置界面
-                AblStepHandler.getInstance().initStepClass(true, new UsbStep(ablSettingCallBack));
-                AblStepHandler.sendMsg(AblSteps.STEP_1);
+                onCallBackSuccess(new AblStateBean(AblStateBean.STATE_SET_SUCCESS));
+                AppUtils.moveToFront(FlowerApplication.getInstance());
                 break;
             }
             default:

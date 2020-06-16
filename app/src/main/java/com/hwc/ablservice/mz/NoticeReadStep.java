@@ -11,7 +11,10 @@ import com.hwc.abllib.bean.AblStateBean;
 import com.hwc.abllib.callback.AblSettingCallBack;
 import com.hwc.abllib.callback.AniCallBack;
 import com.hwc.abllib.utils.AblViewUtil;
+import com.hwc.ablservice.FlowerApplication;
 import com.hwc.ablservice.config.AppConfig;
+import com.hwc.ablservice.utils.AppIntentUtils;
+import com.hwc.ablservice.utils.AppUtils;
 import com.hwc.ablservice.utils.NotificationUtils;
 
 import java.util.List;
@@ -22,6 +25,10 @@ import java.util.List;
  * @author hwc
  */
 public class NoticeReadStep extends AblStepBase implements AblSteps {
+
+    public NoticeReadStep() {
+    }
+
     public NoticeReadStep(AblSettingCallBack ablSettingCallBack) {
         super(ablSettingCallBack);
     }
@@ -40,13 +47,13 @@ public class NoticeReadStep extends AblStepBase implements AblSteps {
                         } else if (ablStateBean.state == AblStateBean.STATE_FIND_INTENT) {
                             AblStepHandler.sendMsg(STEP_2);
                         } else {
-                            onCallBackFail();
+                            onCallBackFail(ablStateBean);
                         }
                     }
 
                     @Override
-                    public void onFail() {
-
+                    public void onFail(AblStateBean ablStateBean) {
+                        onCallBackFail(ablStateBean);
                     }
                 });
 
@@ -70,12 +77,12 @@ public class NoticeReadStep extends AblStepBase implements AblSteps {
                                         }
                                     }
                                 }
-                                AblStepHandler.sendMsg(AblSteps.STEP_4);
+                                AblStepHandler.sendTimeMsg(AblSteps.STEP_4);
                             }
 
                             @Override
                             public void fail() {
-                                AblStepHandler.sendMsg(AblSteps.STEP_4);
+                                AblStepHandler.sendTimeMsg(AblSteps.STEP_4);
                             }
                         }
                 );
@@ -86,9 +93,13 @@ public class NoticeReadStep extends AblStepBase implements AblSteps {
                         0, new AniCallBack() {
                             @Override
                             public void succ(AccessibilityNodeInfo info) {
-                                if (AblViewUtil.clickNodeInfo(info)) {
-                                    AblStepHandler.sendMsg(AblSteps.STEP_4);
-                                }
+                                AblViewUtil.clickNodeInfo(info);
+                                AblStepHandler.sendTimeMsg(AblSteps.STEP_4);
+                            }
+
+                            @Override
+                            public void fail() {
+                                onCallBackFail(new AblStateBean(AblStateBean.STATE_NO_FIND_INTENT));
                             }
                         }
                 );
@@ -96,7 +107,12 @@ public class NoticeReadStep extends AblStepBase implements AblSteps {
             }
             case STEP_4: {
                 AblViewUtil.back();
-                onCallBackSuccess(new AblStateBean(AblStateBean.STATE_HAVE));
+                AblStepHandler.sendTimeMsg(AblSteps.STEP_5);
+                break;
+            }
+            case STEP_5: {
+                onCallBackSuccess(new AblStateBean(AblStateBean.STATE_SET_SUCCESS));
+                AppUtils.moveToFront(FlowerApplication.getInstance());
                 break;
             }
             default:

@@ -12,5 +12,12 @@ public interface AblSettingCallBack {
     /**
      * 失败回调
      */
-    void onFail();
+    void onFail(AblStateBean ablStateBean);
+
+    /**
+     * 回调结束
+     */
+    default void onSetEnd() {
+
+    }
 }

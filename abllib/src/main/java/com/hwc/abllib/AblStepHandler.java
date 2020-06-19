@@ -97,35 +97,7 @@ public class AblStepHandler extends Handler {
      * @param step 步骤
      */
     public static void sendMsg(int step) {
-        callFrom();
         sendMsg(step, AblStepHandler.getInstance().getStepMsgDelayMillis(), new String[]{});
-    }
-
-
-    /**
-     * 日志打印方法
-     * 从什么地方开始调用的路径日志
-     */
-    public static void callFrom() {
-        StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
-        StringBuilder log = new StringBuilder();
-        for (int i = stackTrace.length - 1; i >= 0; i--) {
-            StackTraceElement stackTraceElement = stackTrace[i];
-            String className = stackTraceElement.getClassName();
-            String fileName = stackTraceElement.getFileName();
-            String methodName = stackTraceElement.getMethodName();
-            int lineNumber = stackTraceElement.getLineNumber();
-//                className = className.replaceFirst(packageName + ".", "");
-            if (fileName != null) {
-                fileName = fileName.replace(".java", "");
-            }
-            if (TextUtils.equals(methodName, "callFrom")) {
-                //过滤掉当前callFrom打印方法的输出
-            } else {
-                log.append("->").append(fileName).append(".").append(methodName).append("(").append(lineNumber).append(") \n");
-            }
-        }
-        Log.d("AblStepHandler: ", log.toString());
     }
 
     /**

@@ -32,11 +32,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate");
         setContentView(R.layout.activity_main);
-        AblConfig.Builder().setLogTag("AblService").setLog(true)
-                .setStepMsgDelayMillis(1000)
-                .setFindViewCountDownInterval(200)
-                .setFindViewMillisInFuture(10000)
-                .build().init();
         initView();
         AblFunctionUtil.getInstance().init();
 

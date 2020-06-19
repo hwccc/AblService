@@ -38,7 +38,7 @@ public abstract class AblStepBase implements AblStepHandler.StepListener {
      * 成功回调
      */
     public void onCallBackSuccess(AblStateBean ablStateBean) {
-       onCallBackSuccess(true, ablStateBean);
+        onCallBackSuccess(true, ablStateBean);
     }
 
     /**
@@ -58,6 +58,7 @@ public abstract class AblStepBase implements AblStepHandler.StepListener {
      */
     public void onCallBackFail(AblStateBean ablStateBean) {
         LogUtils.d(TAG, "onCallBackFail: " + ablSettingCallBack);
+        com.hwc.abllib.utils.LogUtils.callFrom();
         if (ablSettingCallBack != null) {
             AblStepHandler.getInstance().setStop(true);
             if (ablStateBean == null) {

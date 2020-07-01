@@ -1,7 +1,7 @@
 package com.hwc.abllib;
 
 import android.accessibilityservice.AccessibilityService;
-import android.util.Log;
+import android.text.TextUtils;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 
@@ -43,8 +43,13 @@ public class AblService extends AccessibilityService {
 
     @Override
     public void onAccessibilityEvent(AccessibilityEvent event) {
-        int eventType = event.getEventType();
         LogUtils.d("==============Start====================");
+        if ((event.getEventType() == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED)
+                && TextUtils.equals("com.android.systemui", event.getPackageName())
+                && TextUtils.equals("android.widget.FrameLayout", event.getClassName())) {
+            LogUtils.d("recent");
+        }
+        int eventType = event.getEventType();
         LogUtils.d("eventType: " + eventType);
         AccessibilityNodeInfo noteInfo = event.getSource();
         if (noteInfo != null) {

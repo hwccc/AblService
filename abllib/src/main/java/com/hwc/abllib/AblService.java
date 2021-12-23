@@ -1,6 +1,10 @@
 package com.hwc.abllib;
 
 import android.accessibilityservice.AccessibilityService;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.text.TextUtils;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
@@ -28,6 +32,7 @@ public class AblService extends AccessibilityService {
     public void onCreate() {
         super.onCreate();
         mAblService = this;
+        setForegroundService();
         init();
     }
 
@@ -61,5 +66,18 @@ public class AblService extends AccessibilityService {
     @Override
     public void onInterrupt() {
 
+    }
+
+    /**
+     * 设置为前台进程服务
+     */
+    private void setForegroundService() {
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            NotificationChannel mChannel = new NotificationChannel(TAG, TAG, NotificationManager.IMPORTANCE_HIGH);
+            notificationManager.createNotificationChannel(mChannel);
+            Notification notification = new Notification.Builder(getApplicationContext(), TAG).build();
+            startForeground(1, notification);
+        }
     }
 }

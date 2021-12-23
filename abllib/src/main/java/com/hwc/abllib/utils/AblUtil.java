@@ -114,7 +114,11 @@ public class AblUtil {
     public static boolean checkAblService(Context context) {
         if (AblUtil.isOpenAccessibility(context, AblService.class)) {
             Intent intentService = new Intent(context, AblService.class);
-            context.startService(intentService);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                context.startForegroundService(intentService);
+            } else {
+                context.startService(intentService);
+            }
             return true;
         } else {
             AblUtil.openAccessibilitySettings();
